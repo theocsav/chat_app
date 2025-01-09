@@ -1,16 +1,28 @@
-# global_chat_app
 
-A new Flutter project.
+# Global Chat App
 
-## Getting Started
+Global Chat App is a Flutter-based messaging application designed to break language barriers. The phone app ensures that every incoming message is translated into your preferred language, enabling seamless communication.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Real-Time Translation
+- Language Flexibility
+- Firebase Integration
+- Cross-Platform Support
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## Tech Stack
+
+**Frontend:** Flutter
+
+**Backend:** Firebase Authentication, Firebase Firestore
+
+**Translation:** idk yet
+
+
+## Authors
+
+- [@theocsav](https://github.com/theocsav)
+- [@Colganmiller](https://github.com/Colganmiller)
+
