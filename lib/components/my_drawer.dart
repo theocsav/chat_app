@@ -20,12 +20,12 @@ class MyDrawer extends StatelessWidget {
           Column(
             children: [
               // logo
-              DrawerHeader(
+              SizedBox(
                 child: Center(
                   child: Image.asset(
                     'assets/images/logo.png',
-                    width: MediaQuery.of(context).size.width * 0.1,
-                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: MediaQuery.of(context).size.height * 0.2,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -37,6 +37,7 @@ class MyDrawer extends StatelessWidget {
                 child: ListTile(
                   title: const Text("Home"),
                   leading: const Icon(Icons.home),
+                  iconColor: Colors.grey,
                   onTap: () {
                     // pop the drawer
                     Navigator.pop(context);
@@ -49,6 +50,7 @@ class MyDrawer extends StatelessWidget {
                 child: ListTile(
                   title: const Text("Settings"),
                   leading: const Icon(Icons.settings),
+                  iconColor: Colors.grey,
                   onTap: () {
                     // pop the drawer
                     Navigator.pop(context);
@@ -72,6 +74,7 @@ class MyDrawer extends StatelessWidget {
             child: ListTile(
               title: const Text("Logout"),
               leading: const Icon(Icons.logout),
+              iconColor: Colors.grey,
               onTap: logout,
             ),
           ),
