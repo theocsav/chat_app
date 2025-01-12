@@ -8,7 +8,7 @@ import 'package:global_chat_app/services/chat/chat_service.dart';
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
-  ChatPage({
+  const ChatPage({
     super.key,
     required this.receiverEmail,
     required this.receiverID,
@@ -145,6 +145,8 @@ class _ChatPageState extends State<ChatPage> {
           ChatBubble(
             message: data["message"],
             isCurrentUser: isCurrentUser,
+            messageID: doc.id,
+            userID: data["senderID"],
           ),
         ],
       )
