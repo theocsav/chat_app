@@ -6,6 +6,7 @@ class ChatBubble extends StatelessWidget {
   final bool isCurrentUser;
   final String messageID;
   final String userID;
+  final String timestamp;
 
   const ChatBubble({
     super.key,
@@ -13,6 +14,7 @@ class ChatBubble extends StatelessWidget {
     required this.isCurrentUser,
     required this.messageID,
     required this.userID,
+    required this.timestamp,
     });
 
   // show options
@@ -138,9 +140,24 @@ class ChatBubble extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 25),
-        child: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
+        child: Column(
+          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+              
+            ),
+            const SizedBox(height: 2.0),
+            Text(
+              timestamp,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10.0,
+                
+              ),
+            ),
+          ],
         ),
       ),
     );
