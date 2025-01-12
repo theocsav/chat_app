@@ -140,6 +140,7 @@ class ChatService extends ChangeNotifier{
       .collection('BlockedUsers')
       .doc(blockedUserID)
       .delete();
+    notifyListeners();
   }
   // GET BLOCK USERS STREAM
 
