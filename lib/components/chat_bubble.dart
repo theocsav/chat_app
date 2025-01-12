@@ -37,18 +37,16 @@ class ChatBubble extends StatelessWidget {
                 leading: const Icon(Icons.block),
                 title: const Text('Block User'),  
                 onTap: () {
-                  
+                  Navigator.pop(context);
+                  _blockUser(context, userID);                  
                 },
               ),
               // cancel button
               ListTile(
                 leading: const Icon(Icons.cancel),
                 title: const Text('Cancel'),  
-                onTap: () {
-                  
-                },
+                onTap: () => Navigator.pop(context),
               ),
-
             ],
           )
         );
@@ -74,9 +72,11 @@ class ChatBubble extends StatelessWidget {
             onPressed: () {
               ChatService().reportUser(messageID, userID);
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Message reported"),
-              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Message reported"),
+                )
+              );
             },
             child: const Text("Report"),
           ),
@@ -86,6 +86,40 @@ class ChatBubble extends StatelessWidget {
   }
 
   // block user
+  void _blockUser(BuildContext context, String userID) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Block Message"),
+        content: const Text("Are you sure you want to block this user?"),
+        actions: [
+          // cancel button
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          // block button
+          TextButton(
+            onPressed: () {
+              // perform block
+              ChatService().blockUser(userID);
+              // dismiss dialog
+              Navigator.pop(context);
+              // dismiss page
+              Navigator.pop(context);
+              // let user know of the result
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("User blocked"),
+                )
+              );
+            },
+            child: const Text("Block"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
