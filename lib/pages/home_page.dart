@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Users"),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.grey,
+        foregroundColor: Theme.of(context).colorScheme.tertiary,
         elevation: 0.0,
         centerTitle: true,
       ),
@@ -40,7 +40,9 @@ class HomePage extends StatelessWidget {
         }
         // loading
         if (snapshot.connectionState == ConnectionState.waiting){
-          return const Text("Loading...");
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
         // return list view
         return ListView(
@@ -52,6 +54,7 @@ class HomePage extends StatelessWidget {
 
   // build individual list tile for user
   Widget _buildUserListItem(Map<String, dynamic> userData, BuildContext context) {
+    
     // display all users except current user
     if (userData["email"] != _authService.getCurrentUser()!.email) {
       return UserTile(

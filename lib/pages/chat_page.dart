@@ -115,7 +115,9 @@ class _ChatPageState extends State<ChatPage> {
         }
         // loading
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading...");
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
         // return list view
         return ListView(
