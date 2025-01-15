@@ -1,13 +1,18 @@
 import 'package:global_chat_app/services/auth/auth_service.dart';
 import 'package:global_chat_app/components/my_button.dart';
 import 'package:global_chat_app/components/my_textfield.dart';
+//import 'package:language_picker/language_picker.dart';
+//import 'package:language_picker/languages.dart';
 import 'package:flutter/material.dart';
+
 
 class RegisterPage extends StatelessWidget {
   // email and pw text controllers
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _confirmPwController = TextEditingController();
+  //final Language _selectedDropdownLanguage = Languages.english;
 
   // tap to go to login page
   final void Function()? onTap;
@@ -26,6 +31,7 @@ class RegisterPage extends StatelessWidget {
     if (_pwController.text == _confirmPwController.text) {
       try {
         auth.signUpWithEmailPassword(
+          _nameController.text,
           _emailController.text,
           _pwController.text,
         );
@@ -75,6 +81,14 @@ class RegisterPage extends StatelessWidget {
             ),
 
             const SizedBox(height: 25),
+            // email textfield
+            MyTextField(
+              hintText: "Name",
+              obscureText: false,
+              controller: _nameController,
+            ),
+
+            const SizedBox(height: 10),
             // email textfield
             MyTextField(
               hintText: "Email",
