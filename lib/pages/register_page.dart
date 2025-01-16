@@ -134,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   });
                 },
                 itemBuilder: (language) => Text(
-                  language.name,
+                  language.isoCode,
                   style: const TextStyle(
                     color: Colors.grey,
               

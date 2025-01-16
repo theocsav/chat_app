@@ -91,7 +91,6 @@ class ChatService extends ChangeNotifier{
   }
 
   // GET MESSAGE
-  // TODO - translate when getting messages
   Stream<QuerySnapshot> getMessages(String userID, otherUserID) {
     // construct a chatroom ID for the two users
     List<String> ids = [userID, otherUserID];
@@ -173,5 +172,12 @@ class ChatService extends ChangeNotifier{
       .collection('Users')
       .doc(currentUser!.uid)
       .update({'language': language});
+  }
+
+  // GET USER LANGUAGE
+  Future<String> getUserLanguage() async {
+    final currentUser = _auth.currentUser;
+    final userDoc = await _firestore.collection('Users').doc(currentUser!.uid).get();
+    return userDoc.data()!['language'];
   }
 }

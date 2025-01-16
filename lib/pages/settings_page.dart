@@ -104,7 +104,7 @@ class SettingsPage extends StatelessWidget {
                   // TODO: get language_page.dart to change user language 
                   initialValue: Languages.english,
                   onValuePicked: (Language language) {
-                    _chatService.changeUserLanguage(language.name);
+                    _chatService.changeUserLanguage(language.isoCode);
                   },
                   itemBuilder: (language) => Text(
                     language.name,
