@@ -164,5 +164,14 @@ class ChatService extends ChangeNotifier{
   }
 
   // GET FOLLOWED USERS STREAM
-  
+
+
+  // CHANGE USER LANGUAGE
+  Future<void> changeUserLanguage(String language) async {
+    final currentUser = _auth.currentUser;
+    await _firestore
+      .collection('Users')
+      .doc(currentUser!.uid)
+      .update({'language': language});
+  }
 }

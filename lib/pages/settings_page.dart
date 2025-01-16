@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat_app/pages/blocked_users_page.dart';
+import 'package:global_chat_app/services/chat/chat_service.dart';
 import 'package:global_chat_app/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:language_picker/language_picker_dropdown.dart';
+import 'package:language_picker/languages.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  SettingsPage({super.key});
+
+  final ChatService _chatService = ChatService();
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +91,29 @@ class SettingsPage extends StatelessWidget {
                     )
                   ],
                 ),
-              ),  
+              ), 
+              // user language
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.only(left: 25, top: 10, right: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 20),
+                child: LanguagePickerDropdown(
+                  // TODO: get language_page.dart to change user language 
+                  initialValue: Languages.english,
+                  onValuePicked: (Language language) {
+                    _chatService.changeUserLanguage(language.name);
+                  },
+                  itemBuilder: (language) => Text(
+                    language.name,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ), 
             ],
           ),
         ),

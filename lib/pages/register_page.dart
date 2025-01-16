@@ -1,53 +1,54 @@
 import 'package:global_chat_app/services/auth/auth_service.dart';
 import 'package:global_chat_app/components/my_button.dart';
 import 'package:global_chat_app/components/my_textfield.dart';
-//import 'package:language_picker/language_picker.dart';
-//import 'package:language_picker/languages.dart';
+import 'package:language_picker/language_picker_dropdown.dart';
+import 'package:language_picker/languages.dart';
 import 'package:flutter/material.dart';
 
-
-class RegisterPage extends StatelessWidget {
-  // email and pw text controllers
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _pwController = TextEditingController();
-  final TextEditingController _confirmPwController = TextEditingController();
-  //final Language _selectedDropdownLanguage = Languages.english;
-
-  // tap to go to login page
+class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
 
-  RegisterPage({
+  const RegisterPage({
     super.key,
     required this.onTap,
   });
 
-  //  register method
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  // Controllers for input fields
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
+  final TextEditingController _confirmPwController = TextEditingController();
+
+  // Selected language
+  Language _selectedLanguage = Languages.english;
+
   void register(BuildContext context) {
-    // get auth service
     final auth = AuthService();
-    
-    // password match -> create user
+
     if (_pwController.text == _confirmPwController.text) {
       try {
         auth.signUpWithEmailPassword(
           _nameController.text,
           _emailController.text,
           _pwController.text,
+          _selectedLanguage.name,
         );
       } catch (e) {
         showDialog(
-          context: context, 
+          context: context,
           builder: (context) => AlertDialog(
             title: Text(e.toString()),
           ),
         );
       }
-    } 
-    // passwords don't match -> show error
-    else {
+    } else {
       showDialog(
-        context: context, 
+        context: context,
         builder: (context) => const AlertDialog(
           title: Text("Passwords don't match!"),
         ),
@@ -57,92 +58,121 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            //logo
+            // Logo
             Image.asset(
               'assets/images/logo.png',
               width: 80,
               height: 80,
               fit: BoxFit.contain,
-              ),
-
+            ),
             const SizedBox(height: 50),
-            // welcome back msg
-            Text("Let's create an account for you",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 16,
+
+            // Welcome message
+            Text(
+              "Let's create an account for you",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16,
               ),
             ),
-
             const SizedBox(height: 25),
-            // email textfield
+
+            // Name textfield
             MyTextField(
               hintText: "Name",
               obscureText: false,
               controller: _nameController,
             ),
-
             const SizedBox(height: 10),
-            // email textfield
+
+            // Email textfield
             MyTextField(
               hintText: "Email",
               obscureText: false,
               controller: _emailController,
             ),
-
             const SizedBox(height: 10),
-            // pw textfield
+
+            // Password textfield
             MyTextField(
               hintText: "Password",
               obscureText: true,
               controller: _pwController,
             ),
-
             const SizedBox(height: 10),
-            // confirm pw textfield
+
+            // Confirm password textfield
             MyTextField(
               hintText: "Confirm password",
               obscureText: true,
               controller: _confirmPwController,
             ),
-
             const SizedBox(height: 25),
-            // login button
+
+            // Language dropdown
+            Text(
+              "Select your preferred language:",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 16,
+                
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: LanguagePickerDropdown(
+                initialValue: _selectedLanguage,
+                onValuePicked: (Language language) {
+                  setState(() {
+                    _selectedLanguage = language;
+                  });
+                },
+                itemBuilder: (language) => Text(
+                  language.name,
+                  style: const TextStyle(
+                    color: Colors.grey,
+              
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            // Register button
             MyButton(
               text: "Register",
               onTap: () => register(context),
             ),
-
             const SizedBox(height: 25),
-            // register now button
+
+            // Login now button
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "Already have an account? ",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 GestureDetector(
-                  onTap: onTap,
+                  onTap: widget.onTap,
                   child: Text(
                     "Login now",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
               ],
-            )
-            
+            ),
           ],
         ),
       ),
