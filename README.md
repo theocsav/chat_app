@@ -18,7 +18,7 @@ Global Chat App is a Flutter-based messaging application designed to break langu
 
 **Backend:** Firebase Authentication, Firebase Firestore
 
-**Translation:** idk yet
+**Translation:** MyMemory
 
 
 ## Authors
