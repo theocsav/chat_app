@@ -56,9 +56,9 @@ class LoginPage extends StatelessWidget {
               fit: BoxFit.contain,
               ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 15),
             // welcome back msg
-            Text("Welcome back, you've been missed!",
+            Text("Log in to ChatIt",
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 16,
@@ -84,7 +84,7 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 25),
             // login button
             MyButton(
-              text: "Login",
+              text: "Log in",
               onTap: () => login(context),
             ),
 

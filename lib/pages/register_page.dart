@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
               height: 80,
               fit: BoxFit.contain,
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 15),
 
             // Welcome message
             Text(
@@ -133,16 +133,21 @@ class _RegisterPageState extends State<RegisterPage> {
                     _selectedLanguage = language;
                   });
                 },
-                itemBuilder: (language) => Text(
-                  language.isoCode,
-                  style: const TextStyle(
-                    color: Colors.grey,
+                itemBuilder: (language) => Padding(
+                  padding: const EdgeInsets.only(left: 12.0), // Add left padding
+                  child: Text(
+                    language.name,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
               
+                    ),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 15),
 
             // Register button
             MyButton(

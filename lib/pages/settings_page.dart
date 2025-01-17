@@ -36,7 +36,7 @@ class SettingsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 margin: const EdgeInsets.only(left: 25, top: 10, right: 25),
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 20),
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 15, bottom: 15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -44,6 +44,8 @@ class SettingsPage extends StatelessWidget {
                       "Light Mode",
                       style: TextStyle(
                         color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
                       ),
                     ),
                     
@@ -65,7 +67,7 @@ class SettingsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 margin: const EdgeInsets.only(left: 25, top: 10, right: 25),
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 20),
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -73,6 +75,8 @@ class SettingsPage extends StatelessWidget {
                       "Blocked Users",
                       style: TextStyle(
                         color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
                       ),
                     ),
                     
@@ -99,17 +103,19 @@ class SettingsPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 margin: const EdgeInsets.only(left: 25, top: 10, right: 25),
-                padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 20),
+                padding: const EdgeInsets.only(left: 25, right: 35, top: 10, bottom: 10),
                 child: LanguagePickerDropdown(
                   // TODO: get language_page.dart to change user language 
                   initialValue: Languages.english,
                   onValuePicked: (Language language) {
-                    _chatService.changeUserLanguage(language.isoCode);
+                    _chatService.changeUserLanguage(language.name);
                   },
                   itemBuilder: (language) => Text(
                     language.name,
                     style: const TextStyle(
                       color: Colors.grey,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
                     ),
                   ),
                 ),

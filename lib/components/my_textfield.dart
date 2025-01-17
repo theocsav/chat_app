@@ -23,10 +23,13 @@ class MyTextField extends StatelessWidget {
         controller: controller,
         focusNode: focusNode,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0), // Reduce height and add right padding
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0), // Add rounded corners
             borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
           ),   
           focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0), // Add rounded corners
             borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
           fillColor: Theme.of(context).colorScheme.secondary,
