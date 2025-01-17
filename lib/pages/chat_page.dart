@@ -7,11 +7,11 @@ import 'package:global_chat_app/services/auth/auth_service.dart';
 import 'package:global_chat_app/services/chat/chat_service.dart';
 
 class ChatPage extends StatefulWidget {
-  final String receiverEmail;
+  final String receiverName;
   final String receiverID;
   const ChatPage({
     super.key,
-    required this.receiverEmail,
+    required this.receiverName,
     required this.receiverID,
     });
 
@@ -85,7 +85,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(widget.receiverName),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.grey,
         elevation: 0.0,

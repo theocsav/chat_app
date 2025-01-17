@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 class UserTile extends StatelessWidget {
-  final String text;
+  final String name;
+  final String email;
   final void Function()? onTap;
+
   const UserTile({
     super.key,
-    required this.text,
+    required this.name,
+    required this.email,
     required this.onTap,
-    });
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class UserTile extends StatelessWidget {
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(2),
             ),
-            margin: const EdgeInsets.symmetric(vertical: 1),
+            margin: const EdgeInsets.symmetric(vertical: 0),
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
@@ -30,19 +33,36 @@ class UserTile extends StatelessWidget {
                   color: Colors.grey,
                 ),
                 const SizedBox(width: 25),
-                // Username
-                Text(text),
+                // Name and Email
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      email,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
         ),
         // add Divider
         const Divider(
-          thickness: 0.5,
+          thickness: 0.1,
           color: Colors.grey,
         ),
       ],
     );
   }
-
 }
