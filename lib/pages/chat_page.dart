@@ -129,7 +129,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // build message item
-  Widget _buildMessageItem(DocumentSnapshot doc){
+  Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     final DateHelper dateHelper = DateHelper();
 
@@ -138,23 +138,49 @@ class _ChatPageState extends State<ChatPage> {
 
     // align message to the right if sender is current user, otherwise left
     var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
-    
 
+    return FutureBuilder<String>(
+      future: _chatService.getUserLanguage(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return const Text("Error loading language");
+        }
+        String userTargetLanguage = snapshot.data ?? "en"; // default to "en" if null
 
-    return Container(
-      alignment: alignment,
-      child: Column(
-        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: [
-          ChatBubble(
-            message: data["message"],
-            isCurrentUser: isCurrentUser,
-            messageID: doc.id,
-            userID: data["senderID"],
-            timestamp: dateHelper.formatDatetime(data["timestamp"].toDate()),
-          ),
-        ],
-      )
+        return FutureBuilder<String>(
+          future: _chatService.getUserLanguageById(widget.receiverID),
+          builder: (context, receiverSnapshot) {
+            if (receiverSnapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            if (receiverSnapshot.hasError) {
+              return const Text("Error loading receiver language");
+            }
+            String chatCurrentLanguage = receiverSnapshot.data ?? "en"; // default to "en" if null
+
+            return Container(
+              alignment: alignment,
+              child: Column(
+                crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  ChatBubble(
+                    message: data["message"],
+                    isCurrentUser: isCurrentUser,
+                    messageID: doc.id,
+                    userID: data["senderID"],
+                    timestamp: dateHelper.formatDatetime(data["timestamp"].toDate()),
+                    userTargetLanguage: userTargetLanguage,
+                    chatCurrentLanguage: chatCurrentLanguage,
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

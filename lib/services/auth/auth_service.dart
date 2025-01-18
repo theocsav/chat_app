@@ -22,12 +22,7 @@ class AuthService {
       );
 
       // save user information in a separate document
-      _firestore.collection("Users").doc(userCredential.user!.uid).set(
-        {
-          'uid': userCredential.user!.uid,
-          'email': email,
-        },
-      );
+      
 
       return userCredential;
     } on FirebaseAuthException catch (e) {

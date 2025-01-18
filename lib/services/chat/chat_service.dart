@@ -180,4 +180,10 @@ class ChatService extends ChangeNotifier{
     final userDoc = await _firestore.collection('Users').doc(currentUser!.uid).get();
     return userDoc.data()!['language'];
   }
+
+  // GET USER LANGUAGE BY ID
+  Future<String> getUserLanguageById(String userID) async {
+    final userDoc = await _firestore.collection('Users').doc(userID).get();
+    return userDoc.data()!['language'];
+  }
 }

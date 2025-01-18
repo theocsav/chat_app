@@ -7,6 +7,9 @@ class ChatBubble extends StatelessWidget {
   final String messageID;
   final String userID;
   final String timestamp;
+  // language translation
+  final String userTargetLanguage;
+  final String chatCurrentLanguage;
 
   const ChatBubble({
     super.key,
@@ -15,6 +18,9 @@ class ChatBubble extends StatelessWidget {
     required this.messageID,
     required this.userID,
     required this.timestamp,
+    // language translation
+    required this.userTargetLanguage,
+    required this.chatCurrentLanguage,
     });
 
   // show options
@@ -124,14 +130,24 @@ class ChatBubble extends StatelessWidget {
   }
 
   @override
+  // TODO: add cache or local storage for translations
+  // it's not efficient to translate the same message multiple times
+  // especially if the user scrolls up and down
+  // UI is refreshing everytime I send a new message.
   Widget build(BuildContext context) {
     final translationService = TranslationService();
+    bool shouldTranslate = userTargetLanguage != chatCurrentLanguage;
+
     return FutureBuilder<String>(
-      future: isCurrentUser ? Future.value(message) : translationService.translateText(
-        text: message,
-        targetLanguage: 'en',
-        currentLanguage:  'es',// Change 'en' to the desired target language
-      ),
+      future: isCurrentUser || !shouldTranslate
+          ? Future.value(message)
+          : translationService.translateText(
+              text: message,
+              // current user language
+              targetLanguage: userTargetLanguage,
+              // other user language
+              currentLanguage: chatCurrentLanguage,
+            ),
       builder: (context, snapshot) {
         final translatedMessage = snapshot.data ?? message;
         return GestureDetector(
