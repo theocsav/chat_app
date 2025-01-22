@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:global_chat_app/services/chat/chat_service.dart';
-import 'package:global_chat_app/services/chat/translation_service.dart';
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isCurrentUser;
@@ -130,65 +129,44 @@ class ChatBubble extends StatelessWidget {
   }
 
   @override
-  // TODO: add cache or local storage for translations
-  // it's not efficient to translate the same message multiple times
-  // especially if the user scrolls up and down
-  // UI is refreshing everytime I send a new message.
   Widget build(BuildContext context) {
-    final translationService = TranslationService();
-    bool shouldTranslate = userTargetLanguage != chatCurrentLanguage;
+    // No FutureBuilder for translation here; already handled in ChatPage
+    final displayedMessage = message;
 
-    return FutureBuilder<String>(
-      future: isCurrentUser || !shouldTranslate
-          ? Future.value(message)
-          : translationService.translateText(
-              text: message,
-              // current user language
-              targetLanguage: userTargetLanguage,
-              // other user language
-              currentLanguage: chatCurrentLanguage,
-            ),
-      builder: (context, snapshot) {
-        final translatedMessage = snapshot.data ?? message;
-        return GestureDetector(
-          onLongPress: () {
-            if (!isCurrentUser) {
-              // show options
-              _showOptions(context, messageID, userID);
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: isCurrentUser ? Colors.blue : Colors.grey.shade700,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(12),
-                topRight: const Radius.circular(12),
-                bottomLeft: isCurrentUser ? const Radius.circular(12) : Radius.zero,
-                bottomRight: isCurrentUser ? Radius.zero : const Radius.circular(12),
+    return GestureDetector(
+      onLongPress: () {
+        if (!isCurrentUser) {
+          // show options
+          _showOptions(context, messageID, userID);
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: isCurrentUser ? Colors.blue : Colors.grey.shade700,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(12),
+            topRight: const Radius.circular(12),
+            bottomLeft: isCurrentUser ? const Radius.circular(12) : Radius.zero,
+            bottomRight: isCurrentUser ? Radius.zero : const Radius.circular(12),
+          ),
+        ),
+        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 25),
+        child: Column(
+          crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(displayedMessage, style: const TextStyle(color: Colors.white)),
+            const SizedBox(height: 2.0),
+            Text(
+              timestamp,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10.0,
               ),
             ),
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 25),
-            child: Column(
-              crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-                Text(
-                  translatedMessage,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                const SizedBox(height: 2.0),
-                Text(
-                  timestamp,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10.0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:global_chat_app/components/my_textfield.dart';
 import 'package:global_chat_app/helpers/date_helper.dart';
 import 'package:global_chat_app/services/auth/auth_service.dart';
 import 'package:global_chat_app/services/chat/chat_service.dart';
+import 'package:global_chat_app/services/chat/translation_service.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverName;
@@ -29,10 +30,20 @@ class _ChatPageState extends State<ChatPage> {
 
   // for textfield focus
   FocusNode myFocusNode = FocusNode();
+
+  // user and receiver languages
+  String? _userLanguage;
+  String? _receiverLanguage;
+
+  // translation cache
+  final Map<String, String> _translationCache = {};
+  final Set<String> _inFlightTranslations = {}; // track ongoing translations
   
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => scrollDown());
 
     // add listener to focus node
     myFocusNode.addListener(() {
@@ -50,6 +61,14 @@ class _ChatPageState extends State<ChatPage> {
     Future.delayed(const Duration(milliseconds: 500),
     () => scrollDown(),
     );
+
+    // Fetch each language once
+    _chatService.getUserLanguage().then((val) {
+      setState(() => _userLanguage = val);
+    });
+    _chatService.getUserLanguageById(widget.receiverID).then((val) {
+      setState(() => _receiverLanguage = val);
+    });
   }
 
   @override
@@ -62,11 +81,13 @@ class _ChatPageState extends State<ChatPage> {
   // scroll controller
   final ScrollController _scrollController = ScrollController();
   void scrollDown() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.fastOutSlowIn,
-    );
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn,
+      );
+    }
   }
   // send message
   void sendMessage() async {
@@ -82,6 +103,20 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Only show one loading indicator if languages aren’t ready
+    if (_userLanguage == null || _receiverLanguage == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    print("Debug: _userLanguage=$_userLanguage, _receiverLanguage=$_receiverLanguage");
+    if (_userLanguage == _receiverLanguage) {
+      print("Debug: Same languages, no translation needed");
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -130,8 +165,27 @@ class _ChatPageState extends State<ChatPage> {
 
   // build message item
   Widget _buildMessageItem(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    final DateHelper dateHelper = DateHelper();
+    // ensure doc exists
+    if (!doc.exists) {
+      return Container(); // placeholder
+    }
+    // ensure doc.data() is not null
+    final rawData = doc.data();
+    if (rawData == null) {
+      return Container(); // skip due to no data
+    }
+
+    final data = rawData as Map<String, dynamic>;
+    if (!data.containsKey("timestamp") || data["timestamp"] == null) {
+      return Container(); // no timestamp
+    }
+
+    final ts = data["timestamp"];
+    if (ts is! Timestamp) {
+      return Container(); // invalid timestamp
+    }
+
+    final String docID = doc.id;
 
     // is current user
     bool isCurrentUser = data["senderID"] == _authService.getCurrentUser()!.uid;
@@ -139,48 +193,67 @@ class _ChatPageState extends State<ChatPage> {
     // align message to the right if sender is current user, otherwise left
     var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
-    return FutureBuilder<String>(
-      future: _chatService.getUserLanguage(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return const Text("Error loading language");
-        }
-        String userTargetLanguage = snapshot.data ?? "en"; // default to "en" if null
+    // Just use the languages, since we know they're loaded
+    String userLang = _userLanguage!;
+    String receiverLang = _receiverLanguage!;
+    bool shouldTranslate = !isCurrentUser && userLang != receiverLang;
 
-        return FutureBuilder<String>(
-          future: _chatService.getUserLanguageById(widget.receiverID),
-          builder: (context, receiverSnapshot) {
-            if (receiverSnapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            if (receiverSnapshot.hasError) {
-              return const Text("Error loading receiver language");
-            }
-            String chatCurrentLanguage = receiverSnapshot.data ?? "en"; // default to "en" if null
+    final originalMessage = data["message"] ?? "";
+    // Immediately store the original message in cache if not present:
+    _translationCache.putIfAbsent(docID, () => originalMessage);
 
-            return Container(
-              alignment: alignment,
-              child: Column(
-                crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  ChatBubble(
-                    message: data["message"],
-                    isCurrentUser: isCurrentUser,
-                    messageID: doc.id,
-                    userID: data["senderID"],
-                    timestamp: dateHelper.formatDatetime(data["timestamp"].toDate()),
-                    userTargetLanguage: userTargetLanguage,
-                    chatCurrentLanguage: chatCurrentLanguage,
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+    // If shouldTranslate and not yet translated
+    if (shouldTranslate &&
+        _translationCache[docID] == originalMessage &&
+        !_inFlightTranslations.contains(docID)) {
+      _inFlightTranslations.add(docID);
+      TranslationService().translateText(
+        text: originalMessage,
+        currentLanguage: receiverLang,
+        targetLanguage: userLang,
+      ).then((translated) {
+        _inFlightTranslations.remove(docID);
+        if (translated != originalMessage) {
+          setState(() {
+            _translationCache[docID] = translated;
+          });
+        }
+      });
+    }
+
+    if (!shouldTranslate) {
+      print("Debug: Skipping translation for docID=$docID (same language or current user)");
+    }
+
+    // Use cached value, or fallback to original message
+    final finalMessage = _translationCache[docID] ?? originalMessage;
+
+    return _buildChatBubble(data, docID, isCurrentUser, finalMessage);
+  }
+
+  Widget _buildChatBubble(
+    Map<String, dynamic> data,
+    String docID,
+    bool isCurrentUser,
+    String finalMessage
+  ) {
+    final DateHelper dateHelper = DateHelper();
+    return Container(
+      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          ChatBubble(
+            message: finalMessage,
+            isCurrentUser: isCurrentUser,
+            messageID: docID,
+            userID: data["senderID"],
+            timestamp: dateHelper.formatDatetime(data["timestamp"].toDate()),
+            userTargetLanguage: _userLanguage!,
+            chatCurrentLanguage: _receiverLanguage!,
+          ),
+        ],
+      ),
     );
   }
 
