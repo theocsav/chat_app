@@ -41,6 +41,7 @@ dependencies:
   cloud_firestore: ^5.6.1
   provider: ^6.1.2
   language_picker: ^0.4.5
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:

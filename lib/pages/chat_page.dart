@@ -191,7 +191,7 @@ class _ChatPageState extends State<ChatPage> {
     bool isCurrentUser = data["senderID"] == _authService.getCurrentUser()!.uid;
 
     // align message to the right if sender is current user, otherwise left
-    var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
+    // var alignment = isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
     // Just use the languages, since we know they're loaded
     String userLang = _userLanguage!;
