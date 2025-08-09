@@ -1,5 +1,5 @@
 
-# Global Chat App
+# Global Chat App (Not being developed anymore)
 
 Global Chat App is a Flutter-based messaging application designed to break language barriers. The phone app ensures that every incoming message is translated into your preferred language, enabling seamless communication.
 
